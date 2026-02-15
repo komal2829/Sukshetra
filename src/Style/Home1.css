@@ -1,0 +1,153 @@
+.home-wrapper {
+    background: linear-gradient(135deg, #ffe6f7, #fffbe7);
+  }
+  
+  .header {
+    background: #ffffffcc;
+  }
+  
+  .site-title {
+    color: #e91e63;
+  }
+  
+  .nav-link-custom {
+    color: #e91e63;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  
+  .book-btn {
+    background-color: #e91e63;
+    color: white;
+  }
+  
+  .hero-title {
+    color: #e91e63;
+  }
+  
+  .hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                var(--hero-bg) center/cover no-repeat;
+    color: white;
+    padding: 50px 20px;
+    position: relative;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hero-title {
+    color: white;
+    font-size: 3rem;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+  }
+  
+  .hero h4 {
+    color: #ffd54f;
+    font-style: italic;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    font-size: 1.3rem;
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .hero-desc {
+    color: white;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 1);
+    font-size: 1rem;
+    max-width: 650px;
+    line-height: 1.6;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px 25px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+  }
+  
+  /* Optional: Add parallax effect */
+  @media (min-width: 768px) {
+    .hero {
+      background-attachment: fixed;
+    }
+  }
+  
+  .img-box {
+    background-color: #e91e63;
+    height: 250px;
+    border-radius: 12px;
+  }
+  
+  .purpose-title, .sub-section-title, .section-title {
+    color: #e91e63;
+  }
+  
+  .staycations {
+    background-color: #fffafc;
+  }
+  
+  /* Horizontal Scroll Container */
+  .scroll-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+    
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .scroll-container::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .scroll-container::-webkit-scrollbar-thumb {
+    background: #e91e63;
+    border-radius: 10px;
+  }
+  
+  .scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #c2185b;
+  }
+  
+  /* Purpose Section Images */
+  .purpose-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .purpose-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(233, 30, 99, 0.3);
+  }
+  .scroll-img {
+    width: 300px;
+    min-width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+  
+  .scroll-img:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
+ 

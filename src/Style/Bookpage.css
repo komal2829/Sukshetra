@@ -1,0 +1,160 @@
+/* Page wrapper with same background as Home */
+.bookpage-wrapper {
+    background: linear-gradient(135deg, #ffe6f7, #fffbe7);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header - Same as Home */
+  .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nav-link-custom {
+    color: #667eea;
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link-custom::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #e91e63, #42a5f5);
+    transition: width 0.3s ease;
+  }
+  
+  .nav-link-custom:hover {
+    color: #e91e63;
+  }
+  
+  .nav-link-custom:hover::after {
+    width: 100%;
+  }
+  
+  /* Hero Section - Same as Home */
+  .hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                var(--hero-bg) center/cover no-repeat;
+    color: white;
+    padding: 50px 20px;
+    position: relative;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hero-title {
+    color: white;
+    font-size: 3rem;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+  }
+  
+  .hero h4 {
+    color: #ffd54f;
+    font-style: italic;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    font-size: 1.3rem;
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .hero-desc {
+    color: white;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 1);
+    font-size: 1rem;
+    max-width: 650px;
+    line-height: 1.6;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px 25px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+  }
+  
+  /* Calendar Styles */
+  .react-calendar {
+    width: 100%;
+    border: none;
+    background: transparent;
+  }
+  
+  /* Both locations available */
+  .both-available-tile {
+    background-color: #90EE90 !important;
+    color: #000;
+    border-radius: 8px;
+  }
+  
+  /* Only Organo available */
+  .organo-available-tile {
+    background-color: #FFD700 !important;
+    color: #000;
+    border-radius: 8px;
+  }
+  
+  /* Only Farmhouse available */
+  .farmhouse-available-tile {
+    background-color: #87CEEB !important;
+    color: #000;
+    border-radius: 8px;
+  }
+  
+  /* Both locations booked */
+  .fully-booked-tile {
+    background-color: #FF6B6B !important;
+    color: #fff;
+    border-radius: 8px;
+  }
+  
+  /* Hover effects */
+  .both-available-tile:hover,
+  .organo-available-tile:hover,
+  .farmhouse-available-tile:hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
+  
+  .fully-booked-tile:hover {
+    cursor: not-allowed;
+  }
+  
+  .react-calendar__tile:enabled:hover {
+    background: rgba(0,0,0,0.06);
+  }
+  
+  /* Card styling */
+  .card {
+    background: white;
+    border-radius: 15px;
+    border: none;
+  }
+  
+  /* Modal backdrop */
+  .modal.d-block {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    
+    .hero h4 {
+      font-size: 1.1rem;
+    }
+  }
