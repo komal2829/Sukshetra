@@ -28,7 +28,7 @@ export default function BookPage() {
 
   async function fetchBookings() {
     try {
-      const res = await axios.get("/api/bookings");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings`);
       setBookings(res.data || []);
     } catch (err) {
       console.error("fetch bookings error", err);
@@ -141,7 +141,7 @@ export default function BookPage() {
         fromDate: form.fromDate,
         toDate: form.toDate
       };
-      const res = await axios.post("/api/bookings", payload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings`, payload);
       if (res.data && res.data.success) {
         setMessage({ type: "success", text: "Booking confirmed! A confirmation email has been sent." });
         setShowModal(false);
