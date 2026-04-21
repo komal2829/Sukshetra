@@ -1,0 +1,191 @@
+/* ===== GLOBAL ===== */
+.bookpage-wrapper {
+width: 100%;
+min-height: 100vh;
+background: linear-gradient(to right, #f5e6e8, #f3e7d3);
+font-family: Arial, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.header {
+background: #ffffff;
+padding: 15px 30px;
+font-weight: 600;
+box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.header a {
+text-decoration: none;
+color: #333;
+margin-right: 10px;
+}
+
+.header a:hover {
+color: #007bff;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+position: relative;
+height: 250px;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+color: #fff;
+}
+
+.hero::before {
+content: "";
+position: absolute;
+inset: 0;
+background: rgba(0,0,0,0.45);
+}
+
+.hero h1 {
+position: relative;
+z-index: 1;
+font-size: 42px;
+font-weight: bold;
+}
+
+/* ===== CALENDAR WRAPPER ===== */
+.calendar-wrapper {
+display: flex;
+justify-content: center;
+margin-top: 40px;
+}
+
+.calendar-card {
+background: #ffffff;
+padding: 25px;
+border-radius: 16px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* ===== CALENDAR BASE ===== */
+.react-calendar {
+border: none;
+width: 100%;
+max-width: 600px;
+font-family: Arial, sans-serif;
+}
+
+/* NAVIGATION */
+.react-calendar__navigation button {
+color: #333;
+font-size: 16px;
+font-weight: bold;
+background: none;
+}
+
+.react-calendar__navigation button:hover {
+background: #f0f0f0;
+border-radius: 8px;
+}
+
+/* WEEK DAYS */
+.react-calendar__month-view__weekdays {
+text-align: center;
+font-weight: bold;
+color: #555;
+}
+
+/* TILES */
+.react-calendar__tile {
+border-radius: 12px;
+padding: 12px 6px;
+font-weight: 500;
+transition: 0.2s ease;
+}
+
+/* HOVER */
+.react-calendar__tile:hover {
+transform: scale(1.05);
+cursor: pointer;
+}
+
+/* ===== COLOR STATES ===== */
+.both-available-tile {
+background: #8fd694 !important;
+}
+
+.organo-available-tile {
+background: #ffd54f !important;
+}
+
+.farmhouse-available-tile {
+background: #81c7e0 !important;
+}
+
+.fully-booked-tile {
+background: #ff6b6b !important;
+color: white !important;
+}
+
+/* ===== MESSAGE ALERT ===== */
+.alert {
+margin-top: 20px;
+padding: 12px;
+border-radius: 8px;
+font-weight: 500;
+}
+
+.alert-success {
+background: #d4edda;
+color: #155724;
+}
+
+.alert-danger {
+background: #f8d7da;
+color: #721c24;
+}
+
+/* ===== MODAL ===== */
+.modal {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.6);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 999;
+}
+
+.modal form {
+background: white;
+padding: 25px;
+border-radius: 12px;
+width: 300px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.modal input {
+padding: 10px;
+border-radius: 6px;
+border: 1px solid #ccc;
+}
+
+.modal button {
+padding: 10px;
+border: none;
+border-radius: 6px;
+background: #28a745;
+color: white;
+font-weight: bold;
+cursor: pointer;
+}
+
+.modal button:hover {
+background: #218838;
+}
+
+/* ===== FOOTER FIX ===== */
+footer {
+margin-top: 60px;
+}
