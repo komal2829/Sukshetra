@@ -28,7 +28,9 @@ export default function BookPage() {
 
   async function fetchBookings() {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings`);
+      console.log("API URL:", process.env.REACT_APP_API_URL);
+
+    const res = await axios.get("http://localhost:5000/api/bookings");
       setBookings(res.data || []);
     } catch (err) {
       console.error("fetch bookings error", err);
@@ -141,22 +143,28 @@ export default function BookPage() {
         fromDate: form.fromDate,
         toDate: form.toDate
       };
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings`, payload);
-      if (res.data && res.data.success) {
-        setMessage({ type: "success", text: "Booking confirmed! A confirmation email has been sent." });
-        setShowModal(false);
-        fetchBookings();
-      } else {
-        setMessage({ type: "danger", text: res.data.message || "Booking failed." });
-      }
-    } catch (err) {
-      console.error(err);
-      const serverMsg = err.response?.data?.message;
-      setMessage({ type: "danger", text: serverMsg || "Error while booking. Try again." });
-    } finally {
-      setSubmitting(false);
+      const res = await axios.post("http://localhost:5000/api/bookings", payload);
+      if (res.status === 200 || res.status === 201) {
+      setMessage({ type: "success", text: "Booking confirmed! ✅" });
+      setShowModal(false);
+      fetchBookings();
     }
+
+  } catch (err) {
+    console.error(err);
+
+    const serverMsg = err.response?.data?.message;
+
+    if (err.response?.status === 409) {
+      setMessage({ type: "danger", text: "Dates already booked ❌" });
+    } else {
+      setMessage({ type: "danger", text: serverMsg || "Error while booking. Try again." });
+    }
+
+  } finally {
+    setSubmitting(false);
   }
+}
 
   return (
     <div className="bookpage-wrapper w-100">
