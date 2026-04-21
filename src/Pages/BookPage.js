@@ -11,7 +11,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 export default function BookPage() {
   const [bookings, setBookings] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
+  
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
