@@ -5,6 +5,7 @@ import 'react-calendar/dist/Calendar.css';
 import '../Style/Bookpage.css';
 import Footer from "./Footer";
 import heroImage from '../Images/general/hero-trees.webp'; // Add hero image
+const API_URL = process.env.REACT_APP_API_URL;
 
 export default function BookPage() {
   const [bookings, setBookings] = useState([]);
@@ -26,22 +27,12 @@ export default function BookPage() {
     fetchBookings();
   }, []);
 
-  async function fetchBookings() {
-  try {
-    const API_URL = process.env.REACT_APP_API_URL;
-
-    if (!API_URL) {
-      console.error("API URL is missing");
-      return;
-    }
-
-    const res = await axios.get(`${API_URL}/api/bookings`);
-
-    setBookings(res.data || []);
-  } catch (err) {
-    console.error("fetch bookings error", err);
-  }
-}
+  async function fetchBookings()
+   { try { console.log("API URL:", process.env.REACT_APP_API_URL); 
+    const API_URL = process.env.REACT_APP_API_URL; axios.get(`${API_URL}/api/bookings`);
+     setBookings(res.data || []); } catch 
+     (err) { console.error("fetch bookings error", err); }
+     }
 
   function getBookingsByLocation() {
     const bookingMap = {};
@@ -149,10 +140,7 @@ export default function BookPage() {
         fromDate: form.fromDate,
         toDate: form.toDate
       };
-      const res = await axios.post(
-  `${process.env.REACT_APP_API_URL}/api/bookings`,
-  payload
-);
+      const res = await axios.post(`${API_URL}/api/bookings`, payload);
       if (res.status === 200 || res.status === 201) {
       setMessage({ type: "success", text: "Booking confirmed! ✅" });
       setShowModal(false);
