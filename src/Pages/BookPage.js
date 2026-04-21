@@ -30,7 +30,7 @@ export default function BookPage() {
     try {
       console.log("API URL:", process.env.REACT_APP_API_URL);
 
-    const res = await axios.get(`${API_URL}/api/bookings`);
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings`)
       setBookings(res.data || []);
     } catch (err) {
       console.error("fetch bookings error", err);
