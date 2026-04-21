@@ -30,7 +30,7 @@ export default function BookPage() {
     try {
       console.log("API URL:", process.env.REACT_APP_API_URL);
 
-    const res = await axios.get("http://localhost:5000/api/bookings");
+    const res = await axios.get(`${API_URL}/api/bookings`);
       setBookings(res.data || []);
     } catch (err) {
       console.error("fetch bookings error", err);
@@ -143,7 +143,7 @@ export default function BookPage() {
         fromDate: form.fromDate,
         toDate: form.toDate
       };
-      const res = await axios.post("http://localhost:5000/api/bookings", payload);
+      const res = await axios.post(`${API_URL}/api/bookings`, payload);
       if (res.status === 200 || res.status === 201) {
       setMessage({ type: "success", text: "Booking confirmed! ✅" });
       setShowModal(false);
