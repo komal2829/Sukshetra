@@ -96,7 +96,7 @@ export default function BookPage() {
       defaultLocation = "Farmhouse";
     }
 
-    setSelectedDate(new Date(day));
+    
     setForm({
       ...form,
       location: defaultLocation,
