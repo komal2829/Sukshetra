@@ -189,3 +189,86 @@ background: #218838;
 footer {
 margin-top: 60px;
 }
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+}
+
+/* HERO */
+.hero {
+  height: 200px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+}
+
+/* CALENDAR */
+.calendar-container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+}
+
+/* TILE COLORS */
+.both-available { background: #90EE90 !important; }
+.organo-available { background: #FFD700 !important; }
+.farmhouse-available { background: #87CEEB !important; }
+.fully-booked { background: #FF6B6B !important; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-box {
+  background:white;
+  padding:20px;
+  width:400px;
+  border-radius:10px;
+}
+
+.modal-header {
+  display:flex;
+  justify-content:space-between;
+}
+
+.modal-body {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.modal-body input, select {
+  padding:8px;
+}
+
+.actions {
+  display:flex;
+  justify-content:space-between;
+}
+
+/* MESSAGE */
+.msg {
+  margin-top:10px;
+  padding:10px;
+}
+
+.msg.success { background:#d4edda; }
+.msg.danger { background:#f8d7da; }
