@@ -79,10 +79,17 @@ function rangesOverlap(aStart, aEnd, bStart, bEnd) {
 // GET bookings
 app.get('/api/bookings', async (req, res) => {
   try {
-    const all = await Booking.find().sort({fromDate:1}).lean();
+    console.log("📥 GET /api/bookings called");
+
+    const all = await Booking.find().sort({ fromDate: 1 }).lean();
+
+    console.log("✅ Data fetched:", all);
+
     res.json(all);
   } catch (err) {
-    console.error(err);
+    console.error("❌ BOOKINGS ERROR FULL:", err);
+    console.error("❌ STACK:", err.stack);
+
     res.status(500).json({ message: 'Server error' });
   }
 });
