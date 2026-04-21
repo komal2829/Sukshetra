@@ -1,21 +1,31 @@
 // server.js
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-
 const app = express();
 //app.use(cors());
 
 
 
+
+// ✅ CORS CONFIG (PUT HERE)
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: [
+    "https://sukshetram-dev.vercel.app",
+    "http://localhost:3000"
+  ],
   credentials: true
 }));
+// ✅ Handle preflight (VERY IMPORTANT)
 
+
+// ✅ Body parser AFTER CORS
 app.use(bodyParser.json());
 
 // Connect to MongoDB
