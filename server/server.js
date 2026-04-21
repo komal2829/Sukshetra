@@ -30,10 +30,19 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 // Connect to MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/sukshetra';
+// Connect to MongoDB
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error("❌ MONGODB_URI is not defined");
+}
+
 mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true, useUnifiedTopology: true
-}).then(()=> console.log('MongoDB connected')).catch(err => console.error(err));
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch(err => console.error("❌ MongoDB connection error:", err));then(()=> console.log('MongoDB connected')).catch(err => console.error(err));
 
 // Booking schema
 const bookingSchema = new mongoose.Schema({
