@@ -27,17 +27,21 @@ export default function BookPage() {
   }, []);
 
   async function fetchBookings() {
-    try {
-      console.log("API URL:", process.env.REACT_APP_API_URL);
-
+  try {
     const API_URL = process.env.REACT_APP_API_URL;
 
-axios.get(`${API_URL}/api/bookings`)
-      setBookings(res.data || []);
-    } catch (err) {
-      console.error("fetch bookings error", err);
+    if (!API_URL) {
+      console.error("API URL is missing");
+      return;
     }
+
+    const res = await axios.get(`${API_URL}/api/bookings`);
+
+    setBookings(res.data || []);
+  } catch (err) {
+    console.error("fetch bookings error", err);
   }
+}
 
   function getBookingsByLocation() {
     const bookingMap = {};
@@ -145,7 +149,10 @@ axios.get(`${API_URL}/api/bookings`)
         fromDate: form.fromDate,
         toDate: form.toDate
       };
-      const res = await axios.post(`${API_URL}/api/bookings`, payload);
+      const res = await axios.post(
+  `${process.env.REACT_APP_API_URL}/api/bookings`,
+  payload
+);
       if (res.status === 200 || res.status === 201) {
       setMessage({ type: "success", text: "Booking confirmed! ✅" });
       setShowModal(false);
