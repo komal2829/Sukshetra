@@ -143,7 +143,7 @@ export default function BookPage() {
         fromDate: form.fromDate,
         toDate: form.toDate
       };
-      const res = await axios.post(`${API_URL}/api/bookings`, payload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/bookings`, payload);
       if (res.status === 200 || res.status === 201) {
       setMessage({ type: "success", text: "Booking confirmed! ✅" });
       setShowModal(false);
