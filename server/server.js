@@ -20,9 +20,10 @@ app.use(cors({
     "https://sukshetram-dev.vercel.app",
     "http://localhost:3000"
   ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
-// ✅ Handle preflight (VERY IMPORTANT)
+app.use(express.json());
 
 
 // ✅ Body parser AFTER CORS
