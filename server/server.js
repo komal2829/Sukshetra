@@ -8,31 +8,11 @@ const nodemailer = require("nodemailer");
 const app = express();
 
 console.log("🚀 Server starting...");
-console.log("MONGODB_URI exists:", !!process.env.MONGODB_URI);
 
 // ======================
-// ✅ CORS CONFIG
+// ✅ SIMPLE CORS (safe for now)
 // ======================
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000"
-];
-
-const isVercel = (origin) => origin && origin.includes("vercel.app");
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin) || isVercel(origin)) {
-      return callback(null, true);
-    }
-
-    console.warn("❌ Blocked by CORS:", origin);
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-}));
+app.use(cors());
 
 // ======================
 // ✅ Middleware
@@ -40,26 +20,11 @@ app.use(cors({
 app.use(express.json());
 
 // ======================
-// ✅ Health Check Route
+// ✅ Health Check
 // ======================
 app.get("/", (req, res) => {
   res.send("API is running 🚀");
 });
-
-// ======================
-// MongoDB Connection (SAFE)
-// ======================
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  console.error("❌ MONGODB_URI missing in environment");
-} else {
-  mongoose.connect(MONGODB_URI)
-    .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => {
-      console.error("❌ MongoDB connection error:", err.message);
-    });
-}
 
 // ======================
 // Booking Schema
@@ -104,8 +69,6 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 // ✅ GET bookings
 app.get("/api/bookings", async (req, res) => {
   try {
-    console.log("📥 GET /api/bookings");
-
     const bookings = await Booking.find()
       .sort({ fromDate: 1 })
       .lean();
@@ -142,12 +105,12 @@ app.post("/api/bookings", async (req, res) => {
       });
     }
 
-    // ✅ Check conflicts
+    // Check conflicts
     const conflicts = await Booking.find({
       location,
       fromDate: { $lte: end },
       toDate: { $gte: start },
-    }).lean();
+    });
 
     if (conflicts.length > 0) {
       return res.status(409).json({
@@ -156,7 +119,6 @@ app.post("/api/bookings", async (req, res) => {
       });
     }
 
-    // ✅ Save booking
     const booking = await Booking.create({
       firstName,
       lastName,
@@ -167,9 +129,7 @@ app.post("/api/bookings", async (req, res) => {
       toDate: end,
     });
 
-    // ======================
-    // EMAIL (non-blocking)
-    // ======================
+    // Send emails (non-blocking)
     if (transporter) {
       setImmediate(async () => {
         try {
@@ -177,14 +137,7 @@ app.post("/api/bookings", async (req, res) => {
             from: process.env.FROM_EMAIL || process.env.SMTP_USER,
             to: process.env.OWNER_EMAIL || "komsred@gmail.com",
             subject: `New booking: ${location}`,
-            text: `
-New booking:
-${firstName} ${lastName || ""}
-${phone}
-${email}
-${location}
-${start.toDateString()} - ${end.toDateString()}
-            `,
+            text: `New booking: ${firstName} ${lastName || ""}`,
           });
 
           await transporter.sendMail({
@@ -193,8 +146,6 @@ ${start.toDateString()} - ${end.toDateString()}
             subject: "Booking Confirmation",
             text: `Hi ${firstName}, your booking is confirmed.`,
           });
-
-          console.log("📧 Emails sent");
         } catch (err) {
           console.error("❌ Email error:", err.message);
         }
@@ -205,16 +156,10 @@ ${start.toDateString()} - ${end.toDateString()}
 
   } catch (err) {
     console.error("❌ POST booking error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    res.status(500).json({ success: false });
   }
 });
 
-// ======================
-// Start Server
-// ======================
 // ======================
 // Start Server FIRST
 // ======================
@@ -223,9 +168,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 
-  // ======================
   // Connect Mongo AFTER server starts
-  // ======================
   const MONGODB_URI = process.env.MONGODB_URI;
 
   if (!MONGODB_URI) {
@@ -235,7 +178,5 @@ app.listen(PORT, () => {
 
   mongoose.connect(MONGODB_URI)
     .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => {
-      console.error("❌ MongoDB error:", err.message);
-    });
+    .catch((err) => console.error("❌ Mongo error:", err.message));
 });
