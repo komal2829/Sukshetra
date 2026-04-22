@@ -10,13 +10,12 @@ const app = express();
 console.log("🚀 Server starting...");
 
 // ======================
-// ✅ CORS (fix preflight)
+// ✅ CORS
 // ======================
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }));
-
 
 // ======================
 // ✅ Middleware
@@ -106,7 +105,6 @@ app.post("/api/bookings", async (req, res) => {
       });
     }
 
-    // ✅ Check conflicts
     const conflicts = await Booking.find({
       location,
       fromDate: { $lte: end },
@@ -130,7 +128,7 @@ app.post("/api/bookings", async (req, res) => {
       toDate: end,
     });
 
-    // ✅ Send emails (non-blocking)
+    // Email (safe async)
     if (transporter) {
       setImmediate(async () => {
         try {
@@ -164,19 +162,17 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 // ======================
-// ✅ Connect DB FIRST, then start server
+// ✅ START SERVER (FIXED)
 // ======================
-// ======================
-// ✅ Start server FIRST (CRITICAL for Railway)
-// ======================
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8080;
 
+// 🔥 IMPORTANT: bind to 0.0.0.0
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // ======================
-// ✅ Connect Mongo (NON-BLOCKING)
+// ✅ CONNECT MONGO (NON-BLOCKING)
 // ======================
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -185,5 +181,5 @@ if (!MONGODB_URI) {
 } else {
   mongoose.connect(MONGODB_URI)
     .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => console.error("❌ Mongo error:", err.message));
+    .catch(err => console.error("❌ Mongo error:", err.message));
 }
