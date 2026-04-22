@@ -12,8 +12,11 @@ console.log("🚀 Server starting...");
 // ======================
 // ✅ CORS (fix preflight)
 // ======================
-app.use(cors());
-app.options("*", cors()); // <-- IMPORTANT for preflight
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
+
 
 // ======================
 // ✅ Middleware
