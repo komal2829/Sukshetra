@@ -3,7 +3,7 @@ import Calendar from "react-calendar";
 import axios from "axios";
 import 'react-calendar/dist/Calendar.css';
 import '../Style/Bookpage.css';
-import Footer from "./Footer";
+
 import heroImage from '../Images/general/hero-trees.webp';
 
 export default function BookPage() {
@@ -273,5 +273,6 @@ export default function BookPage() {
 )}      )}
 
     </div>
+    
   );
 }
