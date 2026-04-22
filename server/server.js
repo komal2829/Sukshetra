@@ -7,7 +7,24 @@ const nodemailer = require("nodemailer");
 const app = express();
 
 // ✅ CORS (allow all for now — fix later if needed)
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman / direct calls
+
+    if (
+      origin.includes("vercel.app") ||
+      origin === "http://localhost:3000"
+    ) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true
+}));
+
+app.options('*', cors()); // ✅ handle preflight
 
 // ✅ Middleware
 app.use(express.json());
