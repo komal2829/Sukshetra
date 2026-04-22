@@ -27,6 +27,7 @@ export default function BookPage() {
 
   async function fetchBookings() {
   try {
+    console.log("API:", process.env.REACT_APP_API_URL); 
     const res = await axios.get(
       `${process.env.REACT_APP_API_URL}/api/bookings`
     );
