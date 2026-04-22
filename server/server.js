@@ -17,8 +17,7 @@ const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(cors({
   origin: [
-    "https://sukshetra-hfkb.vercel.app", // ✅ ADD THIS
-    "https://sukshetram-dev.vercel.app",
+    /vercel\.app$/,   // ✅ allow all vercel deployments
     "http://localhost:3000"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
