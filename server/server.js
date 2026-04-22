@@ -6,22 +6,23 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 
 const app = express();
+
 console.log("🚀 Server starting...");
+console.log("MONGODB_URI exists:", !!process.env.MONGODB_URI);
 
 // ======================
-// ✅ CORS CONFIG (FIXED)
+// ✅ CORS CONFIG
 // ======================
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000"
 ];
 
-// allow all vercel deployments dynamically
 const isVercel = (origin) => origin && origin.includes("vercel.app");
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // Postman / server calls
+    if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin) || isVercel(origin)) {
       return callback(null, true);
@@ -31,11 +32,7 @@ app.use(cors({
     return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 }));
-
-// handle preflight
-
 
 // ======================
 // ✅ Middleware
@@ -50,24 +47,19 @@ app.get("/", (req, res) => {
 });
 
 // ======================
-// MongoDB Connection
+// MongoDB Connection (SAFE)
 // ======================
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  console.error("❌ MONGODB_URI missing in .env");
-  process.exit(1);
+  console.error("❌ MONGODB_URI missing in environment");
+} else {
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log("✅ MongoDB connected"))
+    .catch((err) => {
+      console.error("❌ MongoDB connection error:", err.message);
+    });
 }
-
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB connected"))
-.catch((err) => {
-  console.error("❌ MongoDB connection error:", err);
-  process.exit(1);
-});
 
 // ======================
 // Booking Schema
@@ -108,9 +100,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 // ======================
 // Routes
 // ======================
-app.get("/", (req, res) => {
-  res.send("API is running 🚀");
-});
+
 // ✅ GET bookings
 app.get("/api/bookings", async (req, res) => {
   try {
