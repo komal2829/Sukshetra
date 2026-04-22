@@ -215,8 +215,27 @@ ${start.toDateString()} - ${end.toDateString()}
 // ======================
 // Start Server
 // ======================
+// ======================
+// Start Server FIRST
+// ======================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+
+  // ======================
+  // Connect Mongo AFTER server starts
+  // ======================
+  const MONGODB_URI = process.env.MONGODB_URI;
+
+  if (!MONGODB_URI) {
+    console.error("❌ MONGODB_URI missing");
+    return;
+  }
+
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log("✅ MongoDB connected"))
+    .catch((err) => {
+      console.error("❌ MongoDB error:", err.message);
+    });
 });
