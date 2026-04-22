@@ -6,6 +6,7 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 
 const app = express();
+console.log("🚀 Server starting...");
 
 // ======================
 // ✅ CORS CONFIG (FIXED)
@@ -107,7 +108,9 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 // ======================
 // Routes
 // ======================
-
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
 // ✅ GET bookings
 app.get("/api/bookings", async (req, res) => {
   try {
