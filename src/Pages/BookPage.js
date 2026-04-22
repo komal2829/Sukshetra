@@ -137,7 +137,7 @@ export default function BookPage() {
       setSubmitting(false);
     }
   }
-
+console.log("Bookings:", bookings);
   return (
     <div>
 
