@@ -9,10 +9,7 @@ const nodemailer = require('nodemailer');
 const app = express();
 //app.use(cors());
 
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-}));
+
 
 
 // ✅ CORS CONFIG (PUT HERE)
@@ -20,6 +17,7 @@ const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(cors({
   origin: [
+    "https://sukshetra-hfkb.vercel.app", // ✅ ADD THIS
     "https://sukshetram-dev.vercel.app",
     "http://localhost:3000"
   ],
