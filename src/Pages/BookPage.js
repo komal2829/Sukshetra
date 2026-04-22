@@ -26,13 +26,22 @@ export default function BookPage() {
   }, []);
 
   async function fetchBookings() {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/bookings`);
-      setBookings(res.data || []);
-    } catch (err) {
-      console.error("fetch bookings error", err);
-    }
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/bookings`
+    );
+
+    console.log("API response:", res.data); // 👈 debug
+
+    // ✅ Ensure it's always an array
+    const data = Array.isArray(res.data) ? res.data : [];
+
+    setBookings(data);
+  } catch (err) {
+    console.error("fetch bookings error", err);
+    setBookings([]); // prevent crash
   }
+}
 
   function getBookingsByLocation() {
     const bookingMap = {};
