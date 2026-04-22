@@ -37,7 +37,7 @@ if (!MONGODB_URI) {
   throw new Error("❌ MONGODB_URI is not defined");
 }
 
-mongoose.connect(MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
