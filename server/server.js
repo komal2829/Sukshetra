@@ -163,23 +163,24 @@ app.post("/api/bookings", async (req, res) => {
 // ======================
 // ✅ Connect DB FIRST, then start server
 // ======================
+// ======================
+// ✅ Start server FIRST (CRITICAL for Railway)
+// ======================
 const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+// ======================
+// ✅ Connect Mongo (NON-BLOCKING)
+// ======================
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   console.error("❌ MONGODB_URI missing");
-  process.exit(1);
+} else {
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log("✅ MongoDB connected"))
+    .catch((err) => console.error("❌ Mongo error:", err.message));
 }
-
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log("✅ MongoDB connected");
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection failed:", err.message);
-    process.exit(1);
-  });
