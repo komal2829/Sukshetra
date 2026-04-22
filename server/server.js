@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -6,28 +7,46 @@ const nodemailer = require("nodemailer");
 
 const app = express();
 
-// ✅ CORS (allow all for now — fix later if needed)
+// ======================
+// ✅ CORS CONFIG (FIXED)
+// ======================
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000"
+];
+
+// allow all vercel deployments dynamically
+const isVercel = (origin) => origin && origin.includes("vercel.app");
+
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman / direct calls
+    if (!origin) return callback(null, true); // Postman / server calls
 
-    if (
-      origin.includes("vercel.app") ||
-      origin === "http://localhost:3000"
-    ) {
+    if (allowedOrigins.includes(origin) || isVercel(origin)) {
       return callback(null, true);
-    } else {
-      return callback(new Error("Not allowed by CORS"));
     }
+
+    console.warn("❌ Blocked by CORS:", origin);
+    return callback(new Error("Not allowed by CORS"));
   },
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true
 }));
 
+// handle preflight
+app.options("*", cors());
 
-
+// ======================
 // ✅ Middleware
+// ======================
 app.use(express.json());
+
+// ======================
+// ✅ Health Check Route
+// ======================
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
 
 // ======================
 // MongoDB Connection
@@ -35,25 +54,31 @@ app.use(express.json());
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error("❌ MONGODB_URI is not defined");
+  console.error("❌ MONGODB_URI missing in .env");
+  process.exit(1);
 }
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => {
+  console.error("❌ MongoDB connection error:", err);
+  process.exit(1);
+});
 
 // ======================
 // Booking Schema
 // ======================
 const bookingSchema = new mongoose.Schema({
-  firstName: String,
+  firstName: { type: String, required: true },
   lastName: String,
-  phone: String,
-  email: String,
-  location: String,
-  fromDate: Date,
-  toDate: Date,
+  phone: { type: String, required: true },
+  email: { type: String, required: true },
+  location: { type: String, required: true },
+  fromDate: { type: Date, required: true },
+  toDate: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -62,15 +87,22 @@ const Booking = mongoose.model("Booking", bookingSchema);
 // ======================
 // Nodemailer Setup
 // ======================
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 587),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+let transporter;
+
+if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+  console.log("📧 Mailer ready");
+} else {
+  console.warn("⚠️ Email disabled (missing SMTP env)");
+}
 
 // ======================
 // Routes
@@ -87,7 +119,7 @@ app.get("/api/bookings", async (req, res) => {
 
     res.json(bookings);
   } catch (err) {
-    console.error("❌ GET error:", err);
+    console.error("❌ GET bookings error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -95,13 +127,13 @@ app.get("/api/bookings", async (req, res) => {
 // ✅ POST booking
 app.post("/api/bookings", async (req, res) => {
   try {
-    const { firstName, lastName, phone, email, location, fromDate, toDate } =
-      req.body;
+    const { firstName, lastName, phone, email, location, fromDate, toDate } = req.body;
 
     if (!firstName || !phone || !email || !location || !fromDate) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing required fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
     const start = new Date(fromDate);
@@ -111,9 +143,10 @@ app.post("/api/bookings", async (req, res) => {
     end.setHours(0, 0, 0, 0);
 
     if (end < start) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid date range" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid date range",
+      });
     }
 
     // ✅ Check conflicts
@@ -131,7 +164,7 @@ app.post("/api/bookings", async (req, res) => {
     }
 
     // ✅ Save booking
-    const booking = new Booking({
+    const booking = await Booking.create({
       firstName,
       lastName,
       phone,
@@ -141,40 +174,48 @@ app.post("/api/bookings", async (req, res) => {
       toDate: end,
     });
 
-    await booking.save();
-
     // ======================
     // EMAIL (non-blocking)
     // ======================
-    setImmediate(async () => {
-      try {
-        const ownerMail = {
-          from: process.env.FROM_EMAIL || process.env.SMTP_USER,
-          to: process.env.OWNER_EMAIL || "komsred@gmail.com",
-          subject: `New booking: ${location}`,
-          text: `New booking:\n${firstName} ${lastName}\n${phone}\n${email}\n${location}\n${start.toISOString()} - ${end.toISOString()}`,
-        };
+    if (transporter) {
+      setImmediate(async () => {
+        try {
+          await transporter.sendMail({
+            from: process.env.FROM_EMAIL || process.env.SMTP_USER,
+            to: process.env.OWNER_EMAIL || "komsred@gmail.com",
+            subject: `New booking: ${location}`,
+            text: `
+New booking:
+${firstName} ${lastName || ""}
+${phone}
+${email}
+${location}
+${start.toDateString()} - ${end.toDateString()}
+            `,
+          });
 
-        const userMail = {
-          from: process.env.FROM_EMAIL || process.env.SMTP_USER,
-          to: email,
-          subject: `Booking Confirmation`,
-          text: `Hi ${firstName}, your booking is confirmed.`,
-        };
+          await transporter.sendMail({
+            from: process.env.FROM_EMAIL || process.env.SMTP_USER,
+            to: email,
+            subject: "Booking Confirmation",
+            text: `Hi ${firstName}, your booking is confirmed.`,
+          });
 
-        await transporter.sendMail(ownerMail);
-        await transporter.sendMail(userMail);
-
-        console.log("📧 Emails sent");
-      } catch (err) {
-        console.error("❌ Email error:", err);
-      }
-    });
+          console.log("📧 Emails sent");
+        } catch (err) {
+          console.error("❌ Email error:", err.message);
+        }
+      });
+    }
 
     res.json({ success: true, booking });
+
   } catch (err) {
-    console.error("❌ POST error:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("❌ POST booking error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 });
 
@@ -184,5 +225,5 @@ app.post("/api/bookings", async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
