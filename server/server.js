@@ -10,9 +10,10 @@ const app = express();
 console.log("🚀 Server starting...");
 
 // ======================
-// ✅ SIMPLE CORS (safe for now)
+// ✅ CORS (fix preflight)
 // ======================
 app.use(cors());
+app.options("*", cors()); // <-- IMPORTANT for preflight
 
 // ======================
 // ✅ Middleware
@@ -45,7 +46,7 @@ const Booking = mongoose.model("Booking", bookingSchema);
 // ======================
 // Nodemailer Setup
 // ======================
-let transporter;
+let transporter = null;
 
 if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   transporter = nodemailer.createTransport({
@@ -69,10 +70,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 // ✅ GET bookings
 app.get("/api/bookings", async (req, res) => {
   try {
-    const bookings = await Booking.find()
-      .sort({ fromDate: 1 })
-      .lean();
-
+    const bookings = await Booking.find().sort({ fromDate: 1 }).lean();
     res.json(bookings);
   } catch (err) {
     console.error("❌ GET bookings error:", err);
@@ -105,7 +103,7 @@ app.post("/api/bookings", async (req, res) => {
       });
     }
 
-    // Check conflicts
+    // ✅ Check conflicts
     const conflicts = await Booking.find({
       location,
       fromDate: { $lte: end },
@@ -129,7 +127,7 @@ app.post("/api/bookings", async (req, res) => {
       toDate: end,
     });
 
-    // Send emails (non-blocking)
+    // ✅ Send emails (non-blocking)
     if (transporter) {
       setImmediate(async () => {
         try {
@@ -146,6 +144,8 @@ app.post("/api/bookings", async (req, res) => {
             subject: "Booking Confirmation",
             text: `Hi ${firstName}, your booking is confirmed.`,
           });
+
+          console.log("📧 Emails sent");
         } catch (err) {
           console.error("❌ Email error:", err.message);
         }
@@ -156,27 +156,30 @@ app.post("/api/bookings", async (req, res) => {
 
   } catch (err) {
     console.error("❌ POST booking error:", err);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
 // ======================
-// Start Server FIRST
+// ✅ Connect DB FIRST, then start server
 // ======================
 const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+if (!MONGODB_URI) {
+  console.error("❌ MONGODB_URI missing");
+  process.exit(1);
+}
 
-  // Connect Mongo AFTER server starts
-  const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log("✅ MongoDB connected");
 
-  if (!MONGODB_URI) {
-    console.error("❌ MONGODB_URI missing");
-    return;
-  }
-
-  mongoose.connect(MONGODB_URI)
-    .then(() => console.log("✅ MongoDB connected"))
-    .catch((err) => console.error("❌ Mongo error:", err.message));
-});
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  });
