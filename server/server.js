@@ -15,14 +15,7 @@ const app = express();
 // ✅ CORS CONFIG (PUT HERE)
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
-app.use(cors({
-  origin: [
-    /vercel\.app$/,   // ✅ allow all vercel deployments
-    "http://localhost:3000"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 
